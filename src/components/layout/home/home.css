@@ -1,0 +1,18 @@
+.Home_container{
+  height: calc(100vh - 8rem);
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.Home_cardContainer{
+  margin-top: 2rem;
+  width: 70%;
+  height: 50%;
+}
+
+.Home_pokebutton{
+  margin: 1rem;
+  width: 30%;
+}
