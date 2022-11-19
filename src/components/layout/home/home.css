@@ -1,5 +1,5 @@
 .Home_container{
-  height: calc(100vh - 8rem);
+  height: calc(100vh - 4rem);
   overflow-y: auto;
   display: flex;
   align-items: center;
@@ -7,12 +7,34 @@
 }
 
 .Home_cardContainer{
-  margin-top: 2rem;
-  width: 70%;
-  height: 50%;
+  width: 80%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  width: 100%;
+  margin: 0;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .Home_pokebutton{
   margin: 1rem;
   width: 30%;
+}
+
+.Card_img {
+  max-width: 20rem;
+  padding: 3rem;
+}
+
+.bg-grey {
+  background-color: rgb(231, 229, 229);
+  border-radius: 1rem;
+  border: 2px solid rgb(196, 196, 196);
 }
