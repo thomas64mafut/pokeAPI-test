@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react'
 import './home.css'
-import axios from 'axios'
+import React, {useEffect, useState} from 'react'
 import { Card, Button } from 'react-bootstrap'
+import axios from 'axios'
 
 const Home = () => {
   const maxPokemon = 905;
@@ -12,20 +12,28 @@ const Home = () => {
   const [pokemon, setPokemon] = useState({});
   const [pokemonData, setPokemonData] = useState({});
   const [pokemonFlavorTextShow, setPokemonFlavorTextShow] = useState('');
+  const [pokemonEvolutionChain, setPokemonEvolutionChain] = useState([]);
 
-  
   useEffect(() => {
-    setIsLoading(true);
     if(idToShow !== 0){
+      setIsLoading(true);
       handleGetPokemon();
     }
   }, [idToShow])
   
   useEffect(() => {
-    handleGetFlavorText();
-    handleGetEvolutionChain();
-    setIsLoading(false);
+    if (Object.entries(pokemonData).length !== 0){
+      handleGetFlavorText();
+      handleGetEvolutionChain();
+    }
   }, [pokemonData])
+  
+  useEffect(() => {
+    if (pokemonEvolutionChain.length !== 0){
+      console.log(pokemonEvolutionChain);
+      setIsLoading(false);
+    }
+  }, [pokemonEvolutionChain])
   
   
   const handleIsShiny = () => {
@@ -38,21 +46,44 @@ const Home = () => {
     setPokemonFlavorTextShow(flavorText?.flavor_text);
   }
 
-  const handleGetEvolutionChain = () => {
-    const evolutionChain = pokemonData.evolution_chain?.url
-    console.log(evolutionChain);
+  const handleProcessEvolutionChain = (chain, chainToShow) => {
+    const dataChain = Object.entries(chain);
+
+    const pokemonFound = dataChain.find((prop) => (
+      prop[0] === 'species'
+    ));
+    
+    if (pokemonFound) 
+      setPokemonEvolutionChain(current => [...current,parseInt(pokemonFound[1]?.url.split('pokemon-species/')[1].split('/')[0],10)]);
+    
+    const nextEvolveFound = dataChain.find((prop) => (
+      prop[0] === 'evolves_to' && prop[1]?.length !== 0
+    ));
+    
+    if (nextEvolveFound) {
+      chain = nextEvolveFound[1][0];
+      handleProcessEvolutionChain(chain);
+    }
   }
-  const setImgUrl = (id, shiny) => {
+
+  const handleGetEvolutionChain = async () => {
+    setPokemonEvolutionChain([]);
+    const evolutionChain = pokemonData.evolution_chain?.url;
+    const { data } = await axios(evolutionChain);
+    handleProcessEvolutionChain(data.chain);
+  }
+
+  const handleSetImgUrl = (id, shiny) => {
     if (!shiny) { 
-      return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
+      return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
     }
 
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`;
   }
   
   const handleGetPokemonCount = () => {
     setIdToShow(Math.round(Math.random() * (pokeCount - 1) + 1));
-    setIsShiny(handleIsShiny)
+    setIsShiny(handleIsShiny);
   }
 
   const handleGetPokemon = async () => {
@@ -63,7 +94,7 @@ const Home = () => {
       setPokemonData(pokemonSpecies.data);
     } catch (error) {
       setIdToShow(Math.round(Math.random() * (pokeCount - 1) + 1)); 
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -78,7 +109,7 @@ const Home = () => {
         Atrapar Pokemon
       </Button>
       <Card className='Home_cardContainer'>
-        <Card.Img src={setImgUrl(idToShow, isShiny)} className="Card_img"/>
+        <Card.Img src={handleSetImgUrl(idToShow, isShiny)} className="Card_img"/>
         <Card.Title>
           <h1>
             {isShiny ? 
@@ -95,6 +126,18 @@ const Home = () => {
           <p>
             {pokemonFlavorTextShow}
           </p>
+          <div className='d-flex justify-content-center align-items-center'>
+            {
+              pokemonEvolutionChain?.map((pokemon) =>(
+                <div key={pokemon}>
+                  {pokemon === idToShow ?
+                    <img src={handleSetImgUrl(pokemon, isShiny)} alt="" className='bg-grey'/> : 
+                    <img src={handleSetImgUrl(pokemon, isShiny)} alt="" />
+                  }
+                </div>
+              ))
+            }
+          </div>
         </Card.Body>
       </Card>
     </div>

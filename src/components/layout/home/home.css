@@ -32,3 +32,9 @@ h1 {
   max-width: 20rem;
   padding: 3rem;
 }
+
+.bg-grey {
+  background-color: rgb(231, 229, 229);
+  border-radius: 1rem;
+  border: 2px solid rgb(196, 196, 196);
+}
