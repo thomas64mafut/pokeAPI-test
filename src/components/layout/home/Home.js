@@ -37,7 +37,7 @@ const Home = () => {
   
   
   const handleIsShiny = () => {
-    const odd = Math.round(Math.random () * 2) + 1;
+    const odd = Math.round(Math.random () * 20) + 1;
     return odd === 1;
   }
   
