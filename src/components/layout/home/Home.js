@@ -30,7 +30,7 @@ const Home = () => {
   
   useEffect(() => {
     if (pokemonEvolutionChain.length !== 0){
-      console.log(pokemonEvolutionChain);
+      // console.log(pokemonEvolutionChain);
       setIsLoading(false);
     }
   }, [pokemonEvolutionChain])
@@ -108,38 +108,42 @@ const Home = () => {
       >
         Atrapar Pokemon
       </Button>
-      <Card className='Home_cardContainer'>
-        <Card.Img src={handleSetImgUrl(idToShow, isShiny)} className="Card_img"/>
-        <Card.Title>
-          <h1>
-            {isShiny ? 
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-star-fill me-2 mt-2" viewBox="0 0 16 16">
-                <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
-              </svg>
-              : 
-                ''
-            }
-            {pokemon.name}
-          </h1>
-        </Card.Title>
-        <Card.Body>
-          <p>
-            {pokemonFlavorTextShow}
-          </p>
-          <div className='d-flex justify-content-center align-items-center'>
-            {
-              pokemonEvolutionChain?.map((pokemon) =>(
-                <div key={pokemon}>
-                  {pokemon === idToShow ?
-                    <img src={handleSetImgUrl(pokemon, isShiny)} alt="" className='bg-grey'/> : 
-                    <img src={handleSetImgUrl(pokemon, isShiny)} alt="" />
-                  }
-                </div>
-              ))
-            }
-          </div>
-        </Card.Body>
-      </Card>
+      { isLoading ? 
+        <img src='https://cdn.dribbble.com/users/276865/screenshots/2897070/pok1.gif' className='w-100 Home_loadingContainer' alt=''/> 
+        :
+        <Card className='Home_cardContainer'>
+          <Card.Img src={handleSetImgUrl(idToShow, isShiny)} className="Card_img"/>
+          <Card.Title>
+            <h1>
+              {isShiny ? 
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-star-fill me-2 mt-2" viewBox="0 0 16 16">
+                  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                </svg>
+                : 
+                  ''
+              }
+              {pokemon.name}
+            </h1>
+          </Card.Title>
+          <Card.Body>
+            <p>
+              {pokemonFlavorTextShow}
+            </p>
+            <div className='d-flex justify-content-center align-items-center'>
+              {
+                pokemonEvolutionChain?.map((pokemon) =>(
+                  <div key={pokemon} className='Home_pokemonChainImg'>
+                    {pokemon === idToShow ?
+                      <img src={handleSetImgUrl(pokemon, isShiny)} alt="" className='bg-grey'/> : 
+                      <img src={handleSetImgUrl(pokemon, isShiny)} alt="" onClick={() => setIdToShow(pokemon)}/>
+                    }
+                  </div>
+                ))
+              }
+            </div>
+          </Card.Body>
+        </Card>
+      }
     </div>
   )
 }
