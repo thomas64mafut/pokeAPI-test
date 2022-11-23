@@ -18,6 +18,7 @@ const ControlLogin = () => {
 
   useEffect(() => {
     console.log(usersData);
+    localStorage.setItem('allUsers', JSON.stringify(usersData));
   }, [usersData])
 
   const handleInput = (e) => {
@@ -27,9 +28,26 @@ const ControlLogin = () => {
     setUser({...user, [key]: value});
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmitRegister = (e) => {
     e.preventDefault();
-    setUsersData(current => [...current, user]);
+    const alreadyRegistered = usersData.find(userFromList => userFromList.email === user.email)
+
+    if(alreadyRegistered){
+      alert('Hay un usuario con este correo ya registrado pa')
+    }else {
+      setUsersData(current => [...current, user]);
+      setRegisterModalShow(false)
+    }
+  }
+
+  const handleSubmitLogin = (e) => {
+    e.preventDefault();
+    const userLogin = usersData.find(userFromList => userFromList.email === user.email && userFromList.password === user.password)
+
+    if(userLogin){
+      alert('Logueado')
+      setLoginModalShow(false)
+    }else alert('Datos incorrectos')
   }
 
   const toggleRegisterModal = () => {
@@ -45,7 +63,7 @@ const ControlLogin = () => {
         show={loginModalShow}
         setShow={setLoginModalShow}
         handleInput={handleInput}
-        handleSubmit={handleSubmit}
+        handleSubmit={handleSubmitLogin}
         toggleRegisterModal={toggleRegisterModal}
       />
 
@@ -53,7 +71,7 @@ const ControlLogin = () => {
         show={registerModalShow}
         setShow={setRegisterModalShow}
         handleInput={handleInput}
-        handleSubmit={handleSubmit}
+        handleSubmit={handleSubmitRegister}
       />
     </div>
   )
