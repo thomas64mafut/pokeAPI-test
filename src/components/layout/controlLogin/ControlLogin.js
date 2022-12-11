@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import LoginModal from './modals/LoginModal';
 import RegisterModal from './modals/RegisterModal';
@@ -7,19 +8,7 @@ const ControlLogin = () => {
   const [loginModalShow, setLoginModalShow] = useState(false);
   const [registerModalShow, setRegisterModalShow] = useState(false);
 
-  const [usersData, setUsersData] = useState([
-    {
-      username: 'admin',
-      email: 'admin@mail.com',
-      password: 'admin',
-    },
-  ])
   const [user, setUser] = useState({});
-
-  useEffect(() => {
-    console.log(usersData);
-    localStorage.setItem('allUsers', JSON.stringify(usersData));
-  }, [usersData])
 
   const handleInput = (e) => {
     const key = e.target.name;
@@ -28,26 +17,40 @@ const ControlLogin = () => {
     setUser({...user, [key]: value});
   }
 
-  const handleSubmitRegister = (e) => {
+  const handleSubmitRegister = async (e) => {
     e.preventDefault();
-    const alreadyRegistered = usersData.find(userFromList => userFromList.email === user.email)
+    // const alreadyRegistered = usersData.find(userFromList => userFromList.email === user.email)
 
-    if(alreadyRegistered){
-      alert('Hay un usuario con este correo ya registrado pa')
-    }else {
-      setUsersData(current => [...current, user]);
-      setRegisterModalShow(false)
+    // if(alreadyRegistered){
+    //   alert('Hay un usuario con este correo ya registrado pa')
+    // }else {
+    //   setUsersData(current => [...current, user]);
+    //   setRegisterModalShow(false)
+    // }
+
+    const { data } = await axios.post('http://localhost:4000/api/register', user);
+    if (data.message === 'usuario creado correctamente') {
+      setRegisterModalShow(false);
     }
+    alert(data.message);
   }
 
-  const handleSubmitLogin = (e) => {
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    const userLogin = usersData.find(userFromList => userFromList.email === user.email && userFromList.password === user.password)
+    // const userLogin = usersData.find(userFromList => userFromList.email === user.email && userFromList.password === user.password)
 
-    if(userLogin){
-      alert('Logueado')
-      setLoginModalShow(false)
-    }else alert('Datos incorrectos')
+    // if(userLogin){
+    //   alert('Logueado')
+    //   setLoginModalShow(false)
+    // }else alert('Datos incorrectos')
+
+    const { data } = await axios.post('http://localhost:4000/api/auth', user);
+    if (data.message === 'logueo exitoso'){
+      localStorage.setItem('loggedUser', JSON.stringify(user));
+      setUser({});
+      setLoginModalShow(false);
+    }
+    alert(data.message);
   }
 
   const toggleRegisterModal = () => {

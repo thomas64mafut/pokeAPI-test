@@ -16,11 +16,11 @@ const RegisterModal = (props) => {
           Registro
         </Modal.Header>
         <Modal.Body>
-          <Form className='d-flex align-items-center flex-column'>
+          <Form className='d-flex align-items-center flex-column' onSubmit={handleSubmit}>
             <Form.Group className='mb-3 w-100'>
               <Form.Label>Ingrese su nombre de usuario</Form.Label>
               <Form.Control 
-                name='username' 
+                name='name' 
                 type='text' 
                 placeholder='usuario123'
                 onChange={e => handleInput(e)}
@@ -51,7 +51,6 @@ const RegisterModal = (props) => {
               variant='primary' 
               type='submit' 
               className='w-25 mb-3'
-              onClick={e => handleSubmit(e)}
             >
               Completar Registro 
             </Button>
