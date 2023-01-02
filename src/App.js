@@ -4,8 +4,10 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import Home from './components/layout/home/Home';
+import Pokemon from './components/layout/pokemon/Pokemon';
 import Header from './components/layout/header/Header';
+import ControlLogin from './components/layout/controlLogin/ControlLogin';
+import Home from './components/layout/home/Home';
 
 function App() {
   return (
@@ -13,7 +15,8 @@ function App() {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path='/home' element={<Home />}/>
+          <Route path='/' element={<Home />}/>
+          <Route path='/pokemon' element={<Pokemon />}/>
         </Routes>
       </BrowserRouter>
     </div>

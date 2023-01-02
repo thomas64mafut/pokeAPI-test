@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form, Button, Alert } from 'react-bootstrap';
 
 const LoginModal = (props) => {
   const {
@@ -8,6 +8,7 @@ const LoginModal = (props) => {
     handleInput,
     handleSubmit,
     toggleRegisterModal,
+    error,
   } = props;
 
   return (
@@ -17,6 +18,7 @@ const LoginModal = (props) => {
           Iniciar Sesion
         </Modal.Header>
         <Modal.Body>
+          {error && <Alert variant='danger'>{error}</Alert>}
           <Form className='d-flex align-items-center flex-column' onSubmit={handleSubmit}>
             <Form.Group className='mb-3 w-100'>
               <Form.Label>Ingrese su Correo Electronico</Form.Label>

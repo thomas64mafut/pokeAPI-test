@@ -1,14 +1,22 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import LoginModal from './modals/LoginModal';
 import RegisterModal from './modals/RegisterModal';
 
 const ControlLogin = () => {
   const [loginModalShow, setLoginModalShow] = useState(false);
   const [registerModalShow, setRegisterModalShow] = useState(false);
-
   const [user, setUser] = useState({});
+  const [error, setError] = useState('');
+
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    const userLogged = localStorage.getItem('loggedUser'); 
+    if (userLogged) navigate('/pokemon');
+  }, [])
 
   const handleInput = (e) => {
     const key = e.target.name;
@@ -18,39 +26,47 @@ const ControlLogin = () => {
   }
 
   const handleSubmitRegister = async (e) => {
-    e.preventDefault();
-    // const alreadyRegistered = usersData.find(userFromList => userFromList.email === user.email)
-
-    // if(alreadyRegistered){
-    //   alert('Hay un usuario con este correo ya registrado pa')
-    // }else {
-    //   setUsersData(current => [...current, user]);
-    //   setRegisterModalShow(false)
-    // }
-
-    const { data } = await axios.post('http://localhost:4000/api/register', user);
-    if (data.message === 'usuario creado correctamente') {
-      setRegisterModalShow(false);
+    try {
+      e.preventDefault();
+      const { data } = await axios.post('http://localhost:4000/api/user/register', user);
+      if (data.message === 'usuario creado correctamente') {
+        localStorage.setItem('loggedUser', data?.token);
+        setUser({});
+        setRegisterModalShow(false);
+        navigate('/pokemon');
+      }
+    } catch (error) {
+      setError(
+        error?.response?.data?.message 
+        || error?.response?.data?.errors[0].msg 
+        || 'algo salio mal'
+      );
+      setTimeout(() => {
+        setError('');
+      }, 5000);
     }
-    alert(data.message);
   }
 
   const handleSubmitLogin = async (e) => {
-    e.preventDefault();
-    // const userLogin = usersData.find(userFromList => userFromList.email === user.email && userFromList.password === user.password)
-
-    // if(userLogin){
-    //   alert('Logueado')
-    //   setLoginModalShow(false)
-    // }else alert('Datos incorrectos')
-
-    const { data } = await axios.post('http://localhost:4000/api/auth', user);
-    if (data.message === 'logueo exitoso'){
-      localStorage.setItem('loggedUser', JSON.stringify(user));
-      setUser({});
-      setLoginModalShow(false);
+    try {
+      e.preventDefault();
+      const { data } = await axios.post('http://localhost:4000/api/user/auth', user);
+      if (data.message === 'logueo exitoso'){
+        localStorage.setItem('loggedUser', data?.token);
+        setUser({});
+        setLoginModalShow(false);
+        navigate('/pokemon');
+      }
+    } catch (error) {
+      setError(
+        error?.response?.data?.message 
+        || error?.response?.data?.errors[0].msg 
+        || 'algo salio mal'
+      );
+      setTimeout(() => {
+        setError('');
+      }, 5000);
     }
-    alert(data.message);
   }
 
   const toggleRegisterModal = () => {
@@ -68,6 +84,7 @@ const ControlLogin = () => {
         handleInput={handleInput}
         handleSubmit={handleSubmitLogin}
         toggleRegisterModal={toggleRegisterModal}
+        error={error}
       />
 
       <RegisterModal 
@@ -75,6 +92,7 @@ const ControlLogin = () => {
         setShow={setRegisterModalShow}
         handleInput={handleInput}
         handleSubmit={handleSubmitRegister}
+        error={error}
       />
     </div>
   )
